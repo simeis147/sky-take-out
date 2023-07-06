@@ -50,7 +50,7 @@ public class AutoFillAspect {
             return;
         }
 
-        Object eneity = args[0];
+        Object entity = args[0];
 
         // 准备赋值的数据
         LocalDateTime now = LocalDateTime.now();
@@ -58,25 +58,25 @@ public class AutoFillAspect {
         // 根据当前不同的操作类型, 为对应的属性通过反射来赋值
         if(operationType == OperationType.INSERT){
             try {
-                Method setCreateTime = eneity.getClass().getDeclaredMethod(AutoFillConstant.SET_CREATE_TIME, LocalDateTime.class);
-                Method setCreateUser = eneity.getClass().getDeclaredMethod(AutoFillConstant.SET_CREATE_USER, Long.class);
-                Method setUpdateTime = eneity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_TIME, LocalDateTime.class);
-                Method setUpdateUser = eneity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_USER, Long.class);
+                Method setCreateTime = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_CREATE_TIME, LocalDateTime.class);
+                Method setCreateUser = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_CREATE_USER, Long.class);
+                Method setUpdateTime = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_TIME, LocalDateTime.class);
+                Method setUpdateUser = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_USER, Long.class);
 
-                setCreateTime.invoke(eneity,now);
-                setCreateUser.invoke(eneity,currentId);
-                setUpdateTime.invoke(eneity,now);
-                setUpdateUser.invoke(eneity,currentId);
+                setCreateTime.invoke(entity,now);
+                setCreateUser.invoke(entity,currentId);
+                setUpdateTime.invoke(entity,now);
+                setUpdateUser.invoke(entity,currentId);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }else if (operationType == OperationType.UPDATE){
             try {
-                Method setUpdateTime = eneity.getClass().getDeclaredMethod(AutoFillConstant.SET_CREATE_TIME, LocalDateTime.class);
-                Method setUpdateUser = eneity.getClass().getDeclaredMethod(AutoFillConstant.SET_CREATE_USER, Long.class);
+                Method setUpdateTime = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_TIME, LocalDateTime.class);
+                Method setUpdateUser = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_USER, Long.class);
 
-                setUpdateTime.invoke(eneity,now);
-                setUpdateUser.invoke(eneity,currentId);
+                setUpdateTime.invoke(entity,now);
+                setUpdateUser.invoke(entity,currentId);
             } catch (Exception e) {
                 e.printStackTrace();
             }
