@@ -23,7 +23,6 @@ import org.springframework.util.DigestUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -37,7 +36,7 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @param employeeLoginDTO
      * @return
      */
-    public Employee  login(EmployeeLoginDTO employeeLoginDTO) {
+    public Employee login(EmployeeLoginDTO employeeLoginDTO) {
         String username = employeeLoginDTO.getUsername();
         String password = employeeLoginDTO.getPassword();
 
@@ -51,14 +50,14 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         //密码比对
-        // 对前端传过来的密码进行md5加密
+        // 对前端传过来的明文密码进行md5加密
         password = DigestUtils.md5DigestAsHex(password.getBytes());
         if (!password.equals(employee.getPassword())) {
             //密码错误
             throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
         }
 
-        if (Objects.equals(employee.getStatus(), StatusConstant.DISABLE)) {
+        if (employee.getStatus() == StatusConstant.DISABLE) {
             //账号被锁定
             throw new AccountLockedException(MessageConstant.ACCOUNT_LOCKED);
         }
@@ -72,30 +71,27 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @param employeeDTO
      */
     @Override
-    public void saveEmployee(EmployeeDTO employeeDTO) {
-        System.out.println("当前线程的ID:" + Thread.currentThread() );
-
+    public void save(EmployeeDTO employeeDTO) {
         Employee employee = new Employee();
 
         // 对象属性拷贝
         BeanUtils.copyProperties(employeeDTO,employee);
 
-        // 设置账号状态，默认正常状态，1表示正常，0表示锁定
+        // 设置账号的状态,默认正常状态 1表示正常 0表示锁定
         employee.setStatus(StatusConstant.ENABLE);
 
-        // 设置密码，默认密码123456，需要对密码进行md5加密进行存储
+        // 设置密码,默认密码123456
         employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
 
-        // 设置当前记录的创建时间和修改时间
+        // 设置创建时间, 更新时间, 创建人, 修改人
 //        employee.setCreateTime(LocalDateTime.now());
 //        employee.setUpdateTime(LocalDateTime.now());
 
-        // 设置当前记录创建人ID,和修改人ID
+        // DCP
 //        employee.setCreateUser(BaseContext.getCurrentId());
 //        employee.setUpdateUser(BaseContext.getCurrentId());
 
         employeeMapper.insert(employee);
-
     }
 
     /**
@@ -105,14 +101,16 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     @Override
     public PageResult pageQuery(EmployeePageQueryDTO employeePageQueryDTO) {
-        // select * from employee limit 0,10
-        //开始分页查询
-        PageHelper.startPage(employeePageQueryDTO.getPage(),employeePageQueryDTO.getPageSize());
+        // select *from employee limit 0, 10
+        // 开始分页查询
+        PageHelper.startPage(employeePageQueryDTO.getPage(), employeePageQueryDTO.getPageSize());
 
         Page<Employee> page = employeeMapper.pageQuery(employeePageQueryDTO);
+
         long total = page.getTotal();
         List<Employee> records = page.getResult();
-        return new PageResult(total, records);
+
+        return new PageResult(total,records);
     }
 
     /**
@@ -120,33 +118,30 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @param status
      * @param id
      */
+    @Override
     public void startOrStop(Integer status, Long id) {
         // update employee set status = ? where id = ?
-//        Employee employee = new Employee();
-//        employee.setStatus(status);
-//        employee.setId(id);
         Employee employee = Employee.builder()
                 .status(status)
                 .id(id)
                 .build();
-
         employeeMapper.update(employee);
     }
 
     /**
-     * 根据ID查询员工
+     * 根据id查询员工信息
      * @param id
      * @return
      */
     @Override
     public Employee getById(Long id) {
         Employee employee = employeeMapper.getById(id);
-        employee.setPassword("****");
+        employee.setPassword("******");
         return employee;
     }
 
     /**
-     * 修改员工信息
+     * 编辑员工信息
      * @param employeeDTO
      */
     @Override
@@ -156,7 +151,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 //        employee.setUpdateTime(LocalDateTime.now());
 //        employee.setUpdateUser(BaseContext.getCurrentId());
-
         employeeMapper.update(employee);
     }
 

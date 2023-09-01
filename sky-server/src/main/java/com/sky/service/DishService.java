@@ -14,15 +14,45 @@ public interface DishService {
      * 新增菜品和对应的口味
      * @param dishDTO
      */
-    public void saveWithFlavor(DishDTO dishDTO);
+    void saveWithFlavor(DishDTO dishDTO);
 
+    /**
+     * 菜品分页查询
+     * @param dishPageQueryDTO
+     * @return
+     */
     PageResult pageQuery(DishPageQueryDTO dishPageQueryDTO);
 
+    /**
+     * 菜品起售、停售
+     * @param status
+     * @param id
+     */
+    void startOrStopDish(Integer status, Long id);
+
+    /**
+     * 单个或者批量删除菜品
+     * @param ids
+     */
     void deleteBatch(List<Long> ids);
 
+    /**
+     * 根据ID查询菜品
+     *
+     * @param id
+     * @return
+     */
     DishVO getByIdWithFlavor(Long id);
 
+    /**
+     * 修改菜品信息
+     */
     void updateWithFlavor(DishDTO dishDTO);
 
-    List<DishVO> listWithFlavor(Dish dish);
+    /**
+     * 套餐管理添加菜品回显
+     * @param categoryId
+     * @return
+     */
+    List<Dish> list(Long categoryId);
 }

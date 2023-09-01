@@ -16,7 +16,7 @@ public class CategoryPageQueryDTO implements Serializable {
     //分类名称
     private String name;
 
-    //分类类型 1 菜品分类  2 套餐分类
+    //分类类型 1菜品分类  2套餐分类
     private Integer type;
 
 }

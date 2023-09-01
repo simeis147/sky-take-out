@@ -20,27 +20,27 @@ public class ShopController {
     private RedisTemplate redisTemplate;
 
     /**
-     * 设置店铺的营业状态
+     * 设置店铺营业状态
      * @param status
      * @return
      */
     @PutMapping("/{status}")
-    @ApiOperation("设置店铺的营业状态")
+    @ApiOperation("设置店铺营业状态")
     public Result setStatus(@PathVariable Integer status){
-        log.info("设置店铺的营业状态{}",status == 1 ? "营业中" : "打烊中");
+        log.info("设置店铺营业状态为:{}",status == 1 ? "营业中" : "打样中");
         redisTemplate.opsForValue().set(KEY,status);
         return Result.success();
     }
 
     /**
-     * 查询店铺的营业状态
+     * 获取店铺营业状态
      * @return
      */
     @GetMapping("/status")
-    @ApiOperation("查询店铺的营业状态")
+    @ApiOperation("获取店铺营业状态")
     public Result<Integer> getStatus(){
-        Integer status = (Integer) redisTemplate.opsForValue().get(KEY);
-        log.info("查询店铺的营业状态{}",status == 1 ? "营业中" : "打样中");
-        return Result.success(status);
+        Integer shop_status = (Integer) redisTemplate.opsForValue().get(KEY);
+        log.info("获取店铺营业状态:{}",shop_status == 1 ? "营业中" : "打样中");
+        return Result.success(shop_status);
     }
 }
