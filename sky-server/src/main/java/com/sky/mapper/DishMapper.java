@@ -59,8 +59,8 @@ public interface DishMapper {
 
     /**
      * 套餐管理添加菜品回显
-     * @param categoryId
+     * @param dish
      * @return
      */
-    List<Dish> list(Long categoryId);
+    List<Dish> list(Dish dish);
 }
