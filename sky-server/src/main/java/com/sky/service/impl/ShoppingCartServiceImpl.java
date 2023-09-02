@@ -8,13 +8,11 @@ import com.sky.entity.ShoppingCart;
 import com.sky.mapper.DishMapper;
 import com.sky.mapper.SetmealMapper;
 import com.sky.mapper.ShoppingCartMapper;
-import com.sky.result.Result;
 import com.sky.service.ShoppingCartService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.DeleteMapping;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -101,6 +99,31 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         // 获取到当前用户id
         Long userId = BaseContext.getCurrentId();
         shoppingCartMapper.deleteByUserId(userId);
+    }
+
+    /**
+     * 删除购物车中一个商品
+     */
+    public void deleteShoppingCart(ShoppingCartDTO shoppingCartDTO) {
+        ShoppingCart shoppingCart = new ShoppingCart();
+        BeanUtils.copyProperties(shoppingCartDTO,shoppingCart);
+        Long userId = BaseContext.getCurrentId();
+        shoppingCart.setUserId(userId);
+
+        List<ShoppingCart> carts = shoppingCartMapper.list(shoppingCart);
+
+        // 判断是菜品或者套餐的数量是否为1
+        if (carts.get(0).getNumber() == 1){
+            // 如果为1 删除改商品
+            ShoppingCart cart = carts.get(0);
+            shoppingCartMapper.deleteByDishIdOrSetmealId(cart);
+        } else {
+            // 如果不为1, 将改商品的number-1, 然后更新
+            ShoppingCart cart = carts.get(0);
+            cart.setNumber(cart.getNumber() - 1);
+            shoppingCartMapper.updateNumberById(cart);
+        }
+
     }
 
 
